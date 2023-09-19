@@ -503,8 +503,8 @@ impl<'a> System<'a> for UpdateGameState {
                         lazy.insert(
                             e,
                             Position {
-                                x: player_center.0,
-                                y: player_center.1,
+                                x: crop_pos.0,
+                                y: crop_pos.1,
                                 z: DEPTHS.overlay + id as i64,
                             },
                         );
@@ -568,8 +568,8 @@ impl<'a> System<'a> for UpdateGameState {
                         lazy.insert(
                             e,
                             Position {
-                                x: player_center.0,
-                                y: player_center.1,
+                                x: crop_pos.0,
+                                y: crop_pos.1,
                                 z: DEPTHS.overlay + id as i64,
                             },
                         );
