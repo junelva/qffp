@@ -1,14 +1,16 @@
 # queer folk farmpunk: farming on the moon
 
+![screenshot](res/screenshot.png)
+
 #### Status
 
 Works well on WSL, assume it works on Linux; input is busted on Powershell but the renderer does work.
 
 ### What is it?
 
-"Queer Folk Farmpunk" is a larger game concept I've been toying with for a while. After working on a modern 3D character creator for such a game, I decided to create a demake of sorts - heavily inspired by Stardew Valley - to familiarize myself with the creation of custom game engines.
+"Queer Folk Farmpunk" is a larger game concept I've been toying with for a while. I decided to create a demake of sorts, heavily inspired by Stardew Valley, to familiarize myself with the creation of custom miniature game engines.
 
-qffp is a technical game prototype demonstrating the possibility of creating low-res games with animated pixel art that run in a terminal. This implementation is written in Rust and makes primary use of three crates: crossterm for terminal input and low-level windowing, specs for a lean and versatile Entity Component System, and anathema::display for flicker-free, double-buffered, immediate-mode rendering.
+`qffp` is a technical game prototype demonstrating the possibility of creating low-res games with animated pixel art that run in a terminal. This implementation is written in Rust and makes primary use of three crates: [crossterm](https://github.com/crossterm-rs/crossterm) for terminal input and low-level windowing, [specs](https://github.com/amethyst/specs) for a versatile entity component system, and [anathema::display](https://github.com/togglebyte/anathema) for flicker-free, double-buffered, immediate-mode rendering.
 
 One interesting quality of a pixel buffer being used in a terminal is that the text is inherently higher resolution than the graphics, creating cozy yet readable output.
 
@@ -16,7 +18,7 @@ Developed in a Linux terminal, the pixel art was drawn in Aseprite.
 
 #### Running
 
-You will need the Rust compiler and package manager, `cargo`. If you run the crate with `cargo run`, debug information will be displayed. To run without debug information, use `cargo run -r` to build and run the release version.
+You will need the Rust compiler and package manager, `cargo`. If you run the crate with `cargo run`, debug information will be displayed. To run without debug information, use `cargo run -r` to build and run the release version. It's likely that this command must be run while in the base project directory (`qffp`).
 
 Your terminal font must support unicode half-block characters and your terminal must be in 256 color mode.
 
