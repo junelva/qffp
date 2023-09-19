@@ -1,0 +1,47 @@
+{ "frames": [
+   {
+    "filename": "character-00 0.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 7, "h": 10 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 7, "h": 10 },
+    "sourceSize": { "w": 7, "h": 10 },
+    "duration": 320
+   },
+   {
+    "filename": "character-00 1.aseprite",
+    "frame": { "x": 7, "y": 0, "w": 7, "h": 10 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 7, "h": 10 },
+    "sourceSize": { "w": 7, "h": 10 },
+    "duration": 320
+   },
+   {
+    "filename": "character-00 2.aseprite",
+    "frame": { "x": 14, "y": 0, "w": 7, "h": 10 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 7, "h": 10 },
+    "sourceSize": { "w": 7, "h": 10 },
+    "duration": 320
+   },
+   {
+    "filename": "character-00 3.aseprite",
+    "frame": { "x": 21, "y": 0, "w": 7, "h": 10 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 7, "h": 10 },
+    "sourceSize": { "w": 7, "h": 10 },
+    "duration": 320
+   }
+ ],
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.2.40-dev",
+  "image": "character-00.png",
+  "format": "I8",
+  "size": { "w": 28, "h": 10 },
+  "scale": "1"
+ }
+}

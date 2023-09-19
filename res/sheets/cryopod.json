@@ -1,0 +1,29 @@
+{ "frames": [
+   {
+    "filename": "cryopod 0.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 12, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 12, "h": 16 },
+    "sourceSize": { "w": 12, "h": 16 },
+    "duration": 750
+   },
+   {
+    "filename": "cryopod 1.aseprite",
+    "frame": { "x": 12, "y": 0, "w": 12, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 12, "h": 16 },
+    "sourceSize": { "w": 12, "h": 16 },
+    "duration": 1500
+   }
+ ],
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.2.40-dev",
+  "image": "cryopod.png",
+  "format": "I8",
+  "size": { "w": 24, "h": 16 },
+  "scale": "1"
+ }
+}

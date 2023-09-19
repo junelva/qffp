@@ -1,0 +1,21 @@
+[package]
+name = "qffp"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rand = "0.8.5"
+thiserror = "1.0.48"
+crossterm = "0.27.0"
+anathema = "0.1.0"
+serde_json = "1.0.106"
+image = "0.24.7"
+
+[dependencies.serde]
+version = "1.0.188"
+features = ["derive"]
+
+[dependencies.specs]
+version = "0.19.0"
+features = ["specs-derive"]
+

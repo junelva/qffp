@@ -1,0 +1,20 @@
+{ "frames": [
+   {
+    "filename": "tool-packet.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 5, "h": 6 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 5, "h": 6 },
+    "sourceSize": { "w": 5, "h": 6 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.2.40-dev",
+  "image": "tool-packet.png",
+  "format": "I8",
+  "size": { "w": 5, "h": 6 },
+  "scale": "1"
+ }
+}

@@ -1,0 +1,20 @@
+{ "frames": [
+   {
+    "filename": "tool-shovel.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 5, "h": 10 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 5, "h": 10 },
+    "sourceSize": { "w": 5, "h": 10 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.2.40-dev",
+  "image": "tool-shovel.png",
+  "format": "I8",
+  "size": { "w": 5, "h": 10 },
+  "scale": "1"
+ }
+}
