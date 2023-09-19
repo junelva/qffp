@@ -71,7 +71,10 @@ impl<'a> App<'a> {
             match read()? {
                 Event::FocusGained => {}
                 Event::FocusLost => {}
-                Event::Key(event) => {
+                Event::Key(event) => 'key: {
+                    if event.kind != event::KeyEventKind::Press {
+                        break 'key;
+                    }
                     let code = event.code;
                     let mods = event.modifiers;
 

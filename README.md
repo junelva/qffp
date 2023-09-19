@@ -4,7 +4,7 @@
 
 #### Status
 
-Works well on WSL, assume it works on Linux; input is busted on Powershell but the renderer does work.
+Tested and works on WSL (Linux), Windows Powershell and Windows Command Prompt.
 
 ### What is it?
 
