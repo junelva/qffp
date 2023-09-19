@@ -7,6 +7,7 @@ fn main() -> Result<(), app::AppError> {
             break 'main;
         }
         app.update()?;
+        std::thread::sleep(std::time::Duration::from_millis(20));
     }
 
     app.exit()?;

@@ -6,6 +6,9 @@
 
 Tested and works on WSL (Linux), Windows Powershell and Windows Command Prompt.
 
+Known issues:
+- On Windows, key repeats spam the input event queue. So if you hold down a key to move, your character will keep moving after key release. Nonetheless, the game should be playable with delicate inputs.
+
 ### What is it?
 
 "Queer Folk Farmpunk" is a larger game concept I've been toying with for a while. I decided to create a demake of sorts, heavily inspired by Stardew Valley, to familiarize myself with the creation of custom miniature game engines.

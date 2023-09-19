@@ -73,6 +73,7 @@ impl<'a> App<'a> {
                 Event::FocusLost => {}
                 Event::Key(event) => 'key: {
                     if event.kind != event::KeyEventKind::Press {
+                        input = InputState::None;
                         break 'key;
                     }
                     let code = event.code;
