@@ -145,6 +145,7 @@ pub struct Game {
     pub show_terminal: bool,
     pub terminal_message_index: usize,
     pub terminal_read: bool,
+    pub clear_screen: bool,
 }
 
 impl Game {
@@ -157,6 +158,7 @@ impl Game {
             show_terminal: false,
             terminal_message_index: 0,
             terminal_read: false,
+            clear_screen: false,
         }
     }
 
@@ -306,23 +308,23 @@ impl<'a> System<'a> for UpdateGameState {
             // to store an offset per interactible component. easy rewrite, but not vital.
             if game.holding == item.item_type {
                 sprite.flip = player_flip;
-                let wide_offset = if item.item_type == ItemType::Pod || item.item_type == ItemType::NPC {
-                    -3
-                } else {
-                    0
-                };
+                let wide_offset =
+                    if item.item_type == ItemType::Pod || item.item_type == ItemType::NPC {
+                        -3
+                    } else {
+                        0
+                    };
                 let action_offset = if input.0 == InputState::Action { 1 } else { 0 };
                 let mut small_offset = 0;
-                if game.holding == ItemType::Watercan {
+                if game.holding == ItemType::Watercan || game.holding == ItemType::Terminal {
                     small_offset = 1;
                 } else if game.holding == ItemType::Packet || game.holding == ItemType::Packet2 {
                     small_offset = 2;
-                } else if game.holding == ItemType::Terminal {
-                    small_offset = 1;
                 }
+
                 pos.y = player_pos.1 + small_offset + action_offset + wide_offset;
-                if pos.y < 0 {
-                    pos.y = 0;
+                if pos.y < -2 {
+                    pos.y = -2;
                 }
 
                 let flip_offset = if player_flip { -3 } else { 5 };
@@ -481,7 +483,7 @@ impl<'a> System<'a> for UpdateGameState {
                         if game.show_terminal {
                             game.show_terminal = false;
                             game.terminal_read = true;
-                        } else {
+                        } else if nearest_tool_dist <= PICKUP_DISTANCE {
                             game.show_terminal = true;
                         }
                     } else if game.holding == ItemType::Shovel {
@@ -625,12 +627,16 @@ impl<'a> System<'a> for UpdateGameState {
                     game.show_help = !game.show_help;
                 }
                 InputState::Quit => {}
+                InputState::Clear => {
+                    game.clear_screen = true;
+                }
                 InputState::None => {
                     // when the player sprite stops moving, it stops animating after this many milliseconds.
                     if sprite.last_move + 400 < time.0 {
                         sprite.animating = false;
                         sprite.frame = 0;
                     }
+                    game.clear_screen = false;
                 }
             }
 
@@ -658,9 +664,9 @@ impl<'a> System<'a> for UpdateGameState {
                         pos.x = sz.0 as i64 - 10;
                     }
 
-                    // clamp pos.y to 0, sz.1
-                    if pos.y < 0 {
-                        pos.y = 0;
+                    // clamp pos.y to -2, sz.1
+                    if pos.y < -2 {
+                        pos.y = -2;
                     } else if pos.y > sz.1 as i64 - 5 {
                         pos.y = sz.1 as i64 - 5;
                     }
@@ -773,7 +779,7 @@ impl<'a> System<'a> for UpdateGameState {
                             && sprite.store_index
                                 == store.index_by_name("crop-flower").expect("store error")
                             && game.terminal_read
-                            && ((sprite.frame == 3) || (sprite.frame == 7))
+                            && ((sprite.frame == 3) || (sprite.frame == 6))
                         {
                             game.advance_terminal();
                             break;
@@ -834,8 +840,8 @@ impl<'a> System<'a> for UpdateGameState {
             }
         }
 
+        // remove particles that reach the end of their animation
         for (entity, sprite) in (&entities, &sprites).join() {
-            // remove particles that reach the end of their animation
             if sprite.sprite_type == SpriteType::Particle {
                 let end_frame = store.0[sprite.store_index].data.frames.len() - 1;
                 if sprite.frame == end_frame {
@@ -844,8 +850,9 @@ impl<'a> System<'a> for UpdateGameState {
                 }
             }
         }
+
         // perform actions - grow, water, seed, or tag crop entities for deletion
-        for (entity, item, sprite) in (&entities, &interactibles, &mut sprites).join() {
+        for (entity, item, sprite, pos) in (&entities, &interactibles, &mut sprites, &positions).join() {
             // if terminal is read, stop animating
             if item.item_type == ItemType::Terminal {
                 if game.terminal_read {
@@ -864,6 +871,48 @@ impl<'a> System<'a> for UpdateGameState {
                     continue;
                 } else if sprite.frame < 7 {
                     sprite.frame = sprite.frame - 4 + 1;
+                } else if sprite.frame == 7 {
+                    // in the case of empty crops that are watered or grow to frame 7,
+                    // remove this crop and replace it with animated grass
+                    lazy.remove::<Sprite>(entity);
+                    lazy.remove::<Position>(entity);
+                    lazy.remove::<Interactible>(entity);
+                    
+                    use rand::Rng;
+                    let mut rng = rand::thread_rng();
+                    let e = entities.create();
+                    let id = si.new_index();
+                    let grass_frame_count = store.0[sprite.store_index].data.frames.len();
+                    lazy.insert(
+                        e,
+                        Sprite {
+                            id,
+                            store_index: store
+                                .index_by_name("grass")
+                                .expect("store index runtime error"),
+                            flip: rng.gen_range(0..2) == 0,
+                            frame: rng.gen_range(0..grass_frame_count),
+                            animating: true,
+                            sprite_type: SpriteType::Crop,
+                            ..Sprite::default()
+                        },
+                    );
+                    lazy.insert(
+                        e,
+                        Position {
+                            x: pos.x,
+                            y: pos.y,
+                            z: DEPTHS.crops + id as i64,
+                        },
+                    );
+                    lazy.insert(
+                        e,
+                        Interactible {
+                            item_type: ItemType::Grass,
+                            hold_to_use: false,
+                        },
+                    );
+
                 }
             }
 
@@ -872,10 +921,8 @@ impl<'a> System<'a> for UpdateGameState {
                 continue;
             }
 
-            if sprite_action.action == SpriteActionCommand::Water {
-                if sprite.frame < 4 {
-                    sprite.frame += 4;
-                }
+            if sprite_action.action == SpriteActionCommand::Water && sprite.frame < 4 {
+                sprite.frame += 4;
             } else if sprite_action.action == SpriteActionCommand::Seed {
                 if sprite.store_index
                     == store

@@ -4,32 +4,31 @@
 
 #### Status
 
-Tested and works on WSL (Linux), Windows Powershell and Windows Command Prompt.
+Tested and works on common Linux, Mac, and Windows terminal emulators. Written within WSL.
 
 Known issues:
-- On Windows, key repeats spam the input event queue. So if you hold down a key to move, your character will keep moving after key release. Nonetheless, the game should be playable with delicate inputs.
-
-### What is it?
-
-"Queer Folk Farmpunk" is a larger game concept I've been toying with for a while. I decided to create a demake of sorts, heavily inspired by Stardew Valley, to familiarize myself with the creation of custom miniature game engines.
-
-`qffp` is a technical game prototype demonstrating the possibility of creating low-res games with animated pixel art that run in a terminal. This implementation is written in Rust and makes primary use of three crates: [crossterm](https://github.com/crossterm-rs/crossterm) for terminal input and low-level windowing, [specs](https://github.com/amethyst/specs) for a versatile entity component system, and [anathema::display](https://github.com/togglebyte/anathema) for flicker-free, double-buffered, immediate-mode rendering.
-
-One interesting quality of a pixel buffer being used in a terminal is that the text is inherently higher resolution than the graphics, creating cozy yet readable output.
-
-Developed in a Linux terminal, the pixel art was drawn in Aseprite.
+- On Windows Powershell, key repeats spam the input event queue. So if you hold down a key to move, your character will keep moving after key release. Nonetheless, the game should be playable with delicate inputs.
 
 #### Running
 
-You will need the Rust compiler and package manager, `cargo`. If you run the crate with `cargo run`, debug information will be displayed. To run without debug information, use `cargo run -r` to build and run the release version. It's likely that this command must be run while in the base project directory (`qffp`).
+You will need the [Rust compiler and package manager](https://doc.rust-lang.org/cargo/getting-started/installation.html), `cargo`.
 
-Your terminal font must support unicode half-block characters and your terminal must be in 256 color mode.
+`cargo run` - debug information will be displayed.
+`cargo run -r` - run the release version.
 
-### Analysis
+Your terminal font must support unicode half-block characters ('▀', '▄') and 256 colors.
 
-#### Lessons
+### What is it?
 
-qffp is my first finished game prototype in the Rust language. I learned a lot about the language while using it and did not encounter anything too difficult. Alongside the Rust experience, I became more familiar with specs, the ECS crate I used. The strength of its design became apparent when rendering sorted, animated text sprites in an earlier prototype.
+A tech demo that plays out as a demake of popular farming games.
+
+`qffp` demonstrates the possibility of creating animated pixel art games that run in a terminal. This implementation is written in Rust and makes primary use of three crates: [crossterm](https://github.com/crossterm-rs/crossterm) for terminal input and low-level windowing, [specs](https://github.com/amethyst/specs) for a versatile entity component system, and [anathema::display](https://github.com/togglebyte/anathema) for flicker-free, double-buffered rendering.
+
+One interesting quality of a pixel buffer being used in a terminal is that the text is inherently higher resolution than the graphics, creating cozy yet readable output.
+
+### Lessons
+
+qffp is my first finished game prototype in the Rust language. I learned a lot about the language while using it and did not encounter anything too difficult. Alongside gaining Rust experience, I became more familiar with specs, the ECS crate I used. The strength of its design became apparent when rendering sorted, animated text sprites in an earlier prototype. So far I've kept the code in a prototype state (delicate, unoptimized) as my goal was mainly to prove the concept of an animated terminal game.
 
 #### Things I would do differently
 
@@ -37,7 +36,7 @@ I implemented sprite rendering early on and did not create an intermediary buffe
 
 The renderer would be more flexible if everything was rendered to an internal pixel buffer first. It technically is double buffered with the display module, but that's another text buffer, not a pixel buffer. All this results in game logic needing to count the y axis of sprites by 2, which is not ideal.
 
-### Todo
+### Features/to-do
 
 - [x] custom animated pixel art
 - [x] image sprite loading and rendering
@@ -52,4 +51,20 @@ The renderer would be more flexible if everything was rendered to an internal pi
 - [x] transition animation on sleep
 - [x] terminal: displays sequence of messages to progress story between sleep cycles
 - [x] make it gay
+
+### Post-release fixes and features
+
+- [x] terminal is no longer accidentally usable from any distance
+- [x] story text now explains sleeping as a mechanic
+- [x] grass near the top of the screen can now be destroyed
+- [x] empty tilled soil that gets watered now produces animated grass
+- [x] cleaner handling when resizing the terminal (issues clear/redraw)
+- [x] the anonymous computer voice is now more kind
+
+#### Some more boxes to check and uncheck for fun
+
+- [x]
+- [x]
+- [x]
+- [x]
 

@@ -9,7 +9,6 @@ use crossterm::{cursor, event, style, terminal, QueueableCommand};
 use specs::{Builder, Dispatcher, DispatcherBuilder, World, WorldExt};
 use thiserror::Error;
 
-// using anathema's display module for double buffered screen output
 use anathema::display;
 
 mod render;
@@ -44,6 +43,7 @@ pub enum InputState {
     Action,
     ToggleHelp,
     Quit,
+    Clear,
     None,
 }
 
@@ -136,7 +136,9 @@ impl<'a> App<'a> {
                 }
                 Event::Mouse(_event) => {}
                 Event::Paste(_data) => {}
-                Event::Resize(_width, _height) => {}
+                Event::Resize(_width, _height) => {
+                    input = InputState::Clear;
+                }
             }
         }
         self.input = input;
@@ -198,14 +200,14 @@ impl<'a> App<'a> {
         ])?;
 
         let messages = vec![
-            "### Welcome to Luna!\nYou've chosen to farm. Feel free to get started.\nYou will find a shovel, watercan, and seed packet nearby.\nPress 'u' again to mark this message as read and proceed.".to_string(),
-            "### Keep up the good work.\nIf you water your crops,\nthey'll grow every day.".to_string(),
+            "### Welcome to Luna!\nYou've chosen to farm. Feel free to get started.\nYou will find a shovel, watercan, and seed packet nearby.\nPlease rest in the provided sleeping pod as needed.\nPress 'u' again to mark this message as read and proceed.".to_string(),
+            "### Keep up the good work.\nIf you water your crops, they'll grow every day.".to_string(),
             "New message...\n... > Hey babe! I'll be there soon!\nI can't wait to see your farm. And face. -K".to_string(),
             "New message...\n... > Hey, I left you something.\nTry planting the seeds. -K".to_string(),
-            "### Unauthorized crops detected.\nCease illegal personal growth immediately,\nor face farming license revocation.".to_string(),
+            "### Unauthorized crops detected.\nCease illegal growth immediately,\nor face farming license revocation.".to_string(),
             "New message...\n... > Aw, babe... you're actually growing them.\nRemember when we designed these crops together? -K".to_string(),
-            "### Crop authorization granted.\nApologies for our mistake, doctor.\nThe AI responsible has been sacked.".to_string(),
-            "New message...\n... > Okay, good news.\nDon't ask how, but... I'll be there tomorrow!\nGrow anything nice yet? -K".to_string(),
+            "### Crop authorization granted.\nApologies for our mistake, doctor.\nThe AI responsible has been gently reprimanded.".to_string(),
+            "New message...\n... > Okay, good news. I can't say how, but...\nI'll be there tomorrow! Grow anything nice yet? -K".to_string(),
             "Special message intercepted...\n... > Hey, it's June. I hope you liked the demo.\nLove, peace, and pleasant farming to all who play this.\nWhatever you're struggling with, I believe in you.\nKeep up the good fight and we'll get through this together!".to_string(),
             "### Farming sequence completed. Have fun!".to_string(),
         ];

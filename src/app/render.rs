@@ -70,20 +70,26 @@ fn render_sprite_at_pos(
 
     // iterate over rows, plotting unicode characters to scr.put
     'outer: for y in (0..(rows_vec.len() as usize)).step_by(2) {
+        if (pos.y + y as i64) < 0 {
+            continue 'outer;
+        }
+        let scr_y = pos.y as u16 + (y / 2) as u16;
+        if scr_y > sz.1 - 1 {
+            continue 'outer;
+        }
+
         let row = &rows_vec[y];
         'inner: for x in 0..(row.len() as usize) {
-            let px = row[x];
+            if (pos.x + x as i64) < 0 {
+                continue 'inner;
+            }
             let scr_x = pos.x as u16 + x as u16;
-            let scr_y = pos.y as u16 + (y / 2) as u16;
-
             if scr_x > sz.0 - 1 {
-                break 'inner;
+                continue 'inner;
             }
-            if scr_y > sz.1 - 1 {
-                break 'outer;
-            }
-            
+           
             // px2 is the pixel beneath px in the sprite image
+            let px = row[x];
             let px2 = rows_vec[(y + 1) as usize][x as usize];
 
             let (mut r, mut g, mut b, a) = (px.r, px.g, px.b, px.a);
@@ -204,7 +210,13 @@ impl<'a> System<'a> for RenderBuffer {
 
         let (game, store, sprites, positions) = data;
         let scr = &mut self.screen;
-        scr.erase();
+
+        if game.clear_screen {
+            scr.clear_all(io::stdout()).expect("scr clear all error");
+            scr.render(io::stdout()).expect("scr render error");
+        } else {
+            scr.erase();
+        }
 
         let sz = {
             let scr_size = scr.size();
