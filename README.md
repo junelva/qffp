@@ -61,10 +61,6 @@ The renderer would be more flexible if everything was rendered to an internal pi
 - [x] cleaner handling when resizing the terminal (issues clear/redraw)
 - [x] the anonymous computer voice is now more kind
 
-#### Some more boxes to check and uncheck for fun
+#### License
 
-- [x]
-- [x]
-- [x]
-- [x]
-
+The code is released under the MIT license. The art assets are released under [CC-BY-SA-4.0](https://creativecommons.org/licenses/by-sa/4.0/).
