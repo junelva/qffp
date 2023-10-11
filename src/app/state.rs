@@ -97,7 +97,7 @@ pub enum ItemType {
     Packet,
     Packet2,
     Crop,
-    NPC,
+    Npc,
 }
 
 pub struct SpriteDepths {
@@ -120,7 +120,7 @@ pub const DEPTHS: SpriteDepths = SpriteDepths {
 
 #[derive(Component, Debug)]
 #[storage(VecStorage)]
-pub struct NPC {
+pub struct Npc {
     pub move_target: (i64, i64),
     pub last_move: u64,
     pub move_wait: u64,
@@ -235,7 +235,7 @@ impl<'a> System<'a> for UpdateGameState {
         Read<'a, super::Input>,
         WriteStorage<'a, Sprite>,
         WriteStorage<'a, Position>,
-        WriteStorage<'a, NPC>,
+        WriteStorage<'a, Npc>,
         ReadStorage<'a, Interactible>,
     );
 
@@ -309,7 +309,7 @@ impl<'a> System<'a> for UpdateGameState {
             if game.holding == item.item_type {
                 sprite.flip = player_flip;
                 let wide_offset =
-                    if item.item_type == ItemType::Pod || item.item_type == ItemType::NPC {
+                    if item.item_type == ItemType::Pod || item.item_type == ItemType::Npc {
                         -3
                     } else {
                         0
@@ -365,7 +365,7 @@ impl<'a> System<'a> for UpdateGameState {
 
         // make any NPC walk around randomly
         for (npc, pos, sprite) in (&mut npcs, &mut positions, &mut sprites).join() {
-            if game.holding == ItemType::NPC {
+            if game.holding == ItemType::Npc {
                 sprite.animating = false;
                 sprite.frame = 1;
                 continue;
@@ -421,11 +421,9 @@ impl<'a> System<'a> for UpdateGameState {
             // animate sprite frames by frame length in the loaded sprite metadata
             let sprite_data = &store.0[sprite.store_index];
             let frame_wait = sprite_data.data.frames[sprite.frame].duration as u64;
-            if sprite.animating {
-                if sprite.last_animate + frame_wait < time.0 {
-                    sprite.last_animate = time.0;
-                    sprite.frame = (sprite.frame + 1) % sprite_data.data.frames.len();
-                }
+            if sprite.animating && sprite.last_animate + frame_wait < time.0 {
+                sprite.last_animate = time.0;
+                sprite.frame = (sprite.frame + 1) % sprite_data.data.frames.len();
             }
 
             // below here, only player sprite is handled
@@ -595,8 +593,8 @@ impl<'a> System<'a> for UpdateGameState {
                                 action: SpriteActionCommand::Seed2,
                             };
                         }
-                    } else if ((game.holding == ItemType::None) || (game.holding == ItemType::NPC))
-                        && nearest_tool_type == ItemType::NPC
+                    } else if ((game.holding == ItemType::None) || (game.holding == ItemType::Npc))
+                        && nearest_tool_type == ItemType::Npc
                     {
                         // spawn a heart on the player!
                         let e = entities.create();
@@ -697,11 +695,9 @@ impl<'a> System<'a> for UpdateGameState {
                 1 => {
                     // "water your crops" message progresses story once a crop has been watered
                     for (item, sprite) in (&interactibles, &mut sprites).join() {
-                        if item.item_type == ItemType::Crop {
-                            if sprite.frame > 0 {
-                                game.advance_terminal();
-                                break;
-                            }
+                        if item.item_type == ItemType::Crop && sprite.frame > 0 {
+                            game.advance_terminal();
+                            break;
                         }
                     }
                 }
@@ -815,13 +811,13 @@ impl<'a> System<'a> for UpdateGameState {
                         lazy.insert(
                             e,
                             Interactible {
-                                item_type: ItemType::NPC,
+                                item_type: ItemType::Npc,
                                 hold_to_use: false,
                             },
                         );
                         lazy.insert(
                             e,
-                            NPC {
+                            Npc {
                                 move_target: (sz.0 as i64 / 2, sz.1 as i64 / 2),
                                 last_move: time.0,
                                 move_wait: 200,
@@ -852,7 +848,9 @@ impl<'a> System<'a> for UpdateGameState {
         }
 
         // perform actions - grow, water, seed, or tag crop entities for deletion
-        for (entity, item, sprite, pos) in (&entities, &interactibles, &mut sprites, &positions).join() {
+        for (entity, item, sprite, pos) in
+            (&entities, &interactibles, &mut sprites, &positions).join()
+        {
             // if terminal is read, stop animating
             if item.item_type == ItemType::Terminal {
                 if game.terminal_read {
@@ -877,7 +875,7 @@ impl<'a> System<'a> for UpdateGameState {
                     lazy.remove::<Sprite>(entity);
                     lazy.remove::<Position>(entity);
                     lazy.remove::<Interactible>(entity);
-                    
+
                     use rand::Rng;
                     let mut rng = rand::thread_rng();
                     let e = entities.create();
@@ -912,7 +910,6 @@ impl<'a> System<'a> for UpdateGameState {
                             hold_to_use: false,
                         },
                     );
-
                 }
             }
 

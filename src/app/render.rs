@@ -44,16 +44,16 @@ fn render_sprite_at_pos(
         (scr_size.width as u16, scr_size.height as u16)
     };
 
-    let active_frame_number = sprite.frame as usize;
+    let active_frame_number = sprite.frame;
     let active_frame_data = &info.data.frames[active_frame_number];
     let frame = &active_frame_data.frame;
     let image = &info.image;
 
     let flip = sprite.flip;
-    let mut rows_vec: Vec<Vec<sprite::RGBA>> = vec![];
+    let mut rows_vec: Vec<Vec<sprite::Rgba>> = vec![];
     for y in frame.y..(frame.y + frame.h) {
         let y = y as usize;
-        let mut row_vec: Vec<sprite::RGBA> = vec![];
+        let mut row_vec: Vec<sprite::Rgba> = vec![];
         if flip {
             for x in (frame.x..(frame.x + frame.w)).rev() {
                 let x = x as usize;
@@ -69,7 +69,7 @@ fn render_sprite_at_pos(
     }
 
     // iterate over rows, plotting unicode characters to scr.put
-    'outer: for y in (0..(rows_vec.len() as usize)).step_by(2) {
+    'outer: for y in (0..rows_vec.len()).step_by(2) {
         if (pos.y + y as i64) < 0 {
             continue 'outer;
         }
@@ -79,7 +79,7 @@ fn render_sprite_at_pos(
         }
 
         let row = &rows_vec[y];
-        'inner: for x in 0..(row.len() as usize) {
+        'inner: for (x, _item) in row.iter().enumerate() {
             if (pos.x + x as i64) < 0 {
                 continue 'inner;
             }
@@ -87,10 +87,10 @@ fn render_sprite_at_pos(
             if scr_x > sz.0 - 1 {
                 continue 'inner;
             }
-           
+
             // px2 is the pixel beneath px in the sprite image
             let px = row[x];
-            let px2 = rows_vec[(y + 1) as usize][x as usize];
+            let px2 = rows_vec[y + 1][x];
 
             let (mut r, mut g, mut b, a) = (px.r, px.g, px.b, px.a);
             let (mut r2, mut g2, mut b2, a2) = (px2.r, px2.g, px2.b, px2.a);
@@ -110,8 +110,7 @@ fn render_sprite_at_pos(
                 let black = display::Color::Rgb { r: 0, g: 0, b: 0 };
                 let (mut u1, mut u2) = (black, black);
                 let scr_get_result = scr.get(display::ScreenPos { x: scr_x, y: scr_y });
-                if !scr_get_result.is_none() {
-                    let under = scr_get_result.unwrap();
+                if let Some(under) = scr_get_result {
                     let ch = under.0;
                     let st = under.1;
                     if ch == HB_CHARS[0] {
@@ -121,8 +120,16 @@ fn render_sprite_at_pos(
                         u1 = st.bg.unwrap();
                         u2 = st.fg.unwrap();
                     } else {
-                        u1 = display::Color::Rgb { r: px.r, g: px.g, b: px.b };
-                        u2 = display::Color::Rgb { r: px2.r, g: px2.g, b: px2.b };
+                        u1 = display::Color::Rgb {
+                            r: px.r,
+                            g: px.g,
+                            b: px.b,
+                        };
+                        u2 = display::Color::Rgb {
+                            r: px2.r,
+                            g: px2.g,
+                            b: px2.b,
+                        };
                     }
                 }
                 (u1, u2)
@@ -147,20 +154,18 @@ fn render_sprite_at_pos(
                     style,
                     display::ScreenPos { x: scr_x, y: scr_y },
                 );
-            } else {
-                if a2 > 0 {
-                    style.set_bg(u1);
-                    style.set_fg(display::Color::Rgb {
-                        r: r2,
-                        g: g2,
-                        b: b2,
-                    });
-                    scr.put(
-                        HB_CHARS[1],
-                        style,
-                        display::ScreenPos { x: scr_x, y: scr_y },
-                    );
-                }
+            } else if a2 > 0 {
+                style.set_bg(u1);
+                style.set_fg(display::Color::Rgb {
+                    r: r2,
+                    g: g2,
+                    b: b2,
+                });
+                scr.put(
+                    HB_CHARS[1],
+                    style,
+                    display::ScreenPos { x: scr_x, y: scr_y },
+                );
             }
         }
     }
@@ -222,7 +227,7 @@ impl<'a> System<'a> for RenderBuffer {
             let scr_size = scr.size();
             (scr_size.width as u16, scr_size.height as u16)
         };
-        
+
         // per-sprite debug information for debug builds
         struct DebugFrameNumber {
             x: i64,
@@ -230,7 +235,7 @@ impl<'a> System<'a> for RenderBuffer {
             num: String,
         }
         let mut debug_numbers: Vec<DebugFrameNumber> = vec![];
-        
+
         // get sorted sprites by 'z' on position
         let mut sorted_sprites = (&positions, &sprites).join().collect::<Vec<_>>();
         sorted_sprites.sort_by(|a, b| {

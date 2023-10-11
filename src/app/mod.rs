@@ -18,15 +18,15 @@ mod state;
 #[derive(Error, Debug)]
 pub enum AppError {
     #[error("stdio error")]
-    StdioError(#[from] std::io::Error),
+    Stdio(#[from] std::io::Error),
     #[error("utf8 error")]
-    Utf8Error(#[from] str::Utf8Error),
+    Utf8(#[from] str::Utf8Error),
     #[error("serde_json error")]
-    SerdeError(#[from] serde_json::Error),
+    Serde(#[from] serde_json::Error),
     #[error("image error")]
-    ImageError(#[from] image::ImageError),
+    Image(#[from] image::ImageError),
     #[error("spritestore error")]
-    SpriteStoreError(#[from] sprite::SpriteStoreError),
+    SpriteStore(#[from] sprite::SpriteStoreError),
 }
 
 #[derive(PartialEq, PartialOrd, Clone, Copy)]
@@ -171,7 +171,7 @@ impl<'a> App<'a> {
         app.world.register::<state::Sprite>();
         app.world.register::<state::Interactible>();
         app.world.register::<state::Position>();
-        app.world.register::<state::NPC>();
+        app.world.register::<state::Npc>();
 
         // insert specs resources
         app.world.insert(state::SpriteIndexer(0));
@@ -238,7 +238,7 @@ impl<'a> App<'a> {
                     .with(state::Position {
                         x,
                         y,
-                        z: state::DEPTHS.ground as i64,
+                        z: state::DEPTHS.ground,
                     })
                     .build();
 
@@ -254,7 +254,7 @@ impl<'a> App<'a> {
                         .with(state::Position {
                             x,
                             y,
-                            z: state::DEPTHS.overlay as i64,
+                            z: state::DEPTHS.overlay,
                         })
                         .build();
                 }
@@ -348,7 +348,7 @@ impl<'a> App<'a> {
                 z: state::DEPTHS.player + id as i64,
             })
             .build();
-        
+
         // npc from start, for testing
         // app.world
         //     .create_entity()
@@ -485,7 +485,7 @@ impl<'a> App<'a> {
             *input = Input(self.input);
         }
 
-        self.dispatcher.dispatch(&mut self.world);
+        self.dispatcher.dispatch(&self.world);
         self.world.maintain();
 
         self.input = InputState::None;
