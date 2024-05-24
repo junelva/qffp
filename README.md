@@ -20,7 +20,7 @@ Your terminal font must support unicode half-block characters ('▀', '▄') and
 
 ### What is it?
 
-A tech demo that plays out as a demake of popular farming games.
+A short game that plays out as a demake of popular farming games.
 
 `qffp` demonstrates the possibility of creating animated pixel art games that run in a terminal. This implementation is written in Rust and makes primary use of three crates: [crossterm](https://github.com/crossterm-rs/crossterm) for terminal input and low-level windowing, [specs](https://github.com/amethyst/specs) for a versatile entity component system, and [anathema::display](https://github.com/togglebyte/anathema) for flicker-free, double-buffered rendering.
 
